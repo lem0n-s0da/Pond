@@ -16,14 +16,16 @@ struct MainView: View {
                 Text("Pond")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .padding(.top, 50)
+                    .foregroundStyle(Color(red: 67/255, green: 47/255, blue: 47/255))
+                    .padding(.top, 20)
                 
                 Image("Pond Logo")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 200, height: 200)
-                    .padding(.top, 10)
-                    .padding(.bottom, 50)
+                    .frame(width: 250, height: 250)
+                    .border(Color(red: 67/255, green: 47/255, blue: 47/255), width: 3.75)
+                    .padding(.top, 35)
+                    .padding(.bottom, 45)
                 
                 VStack(spacing: 20) {
                     NavigationLink("Log In", destination: LoginView())
