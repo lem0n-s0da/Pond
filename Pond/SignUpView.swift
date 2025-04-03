@@ -14,6 +14,19 @@ struct SignUpView: View {
     @State private var password = ""
     @State private var successMessage = ""
     
+    // Password requirments
+    private var isValidLength: Bool { password.count >= 8 }
+    private var hasUpperAndLower: Bool {
+        password.range(of: "[A-Z]", options: .regularExpression) != nil &&
+        password.range(of: "[a-z]", options: .regularExpression) != nil
+    }
+    private var hasNumber: Bool {
+        password.range(of: "[0-9]", options: .regularExpression) != nil
+    }
+    private var isPasswordValid: Bool {
+        isValidLength && hasUpperAndLower && hasNumber
+    }
+    
     var body: some View {
         VStack {
             Text("Username")
@@ -32,11 +45,21 @@ struct SignUpView: View {
             SecureField("Password", text: $password)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.top, 10)
-                .padding(.bottom, 55)
+                .padding(.bottom, 15)
                 .padding(.leading, 20)
                 .padding(.trailing, 20)
             
-            
+            VStack(alignment: .leading) {
+                Text("- At least 8 characters long")
+                    .foregroundStyle(isValidLength ? .green : .gray)
+                Text("- Includes at least one uppercase and lowercase letter")
+                    .foregroundStyle(hasUpperAndLower ? .green : .gray)
+                Text("- Includes at least one number")
+                    .foregroundStyle(hasNumber ? .green : .gray)
+            }
+            .font(.footnote)
+            .padding(.horizontal)
+            .padding(.bottom, 25)
             
             Button("Sign Up") {
                 signUp()
@@ -56,7 +79,22 @@ struct SignUpView: View {
     }
 
     private func signUp() {
+        guard isPasswordValid else {
+            successMessage = "Password does not meet all requirments"
+            return
+        }
         
+        let newUser = UserInfo(context: viewContext)
+        newUser.id = UUID()
+        newUser.username = username
+        newUser.password = password
+        
+        do {
+            try viewContext.save()
+            successMessage = "Account Created!"
+        } catch {
+            print("Error saving user: \(error)")
+        }
     }
     
 }
