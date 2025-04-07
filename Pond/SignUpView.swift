@@ -11,6 +11,7 @@ import CoreData
 struct SignUpView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @State private var username = ""
+    @State private var email = ""
     @State private var password = ""
     @State private var successMessage = ""
     
@@ -33,6 +34,16 @@ struct SignUpView: View {
                 .foregroundStyle(.indigo)
             
             TextField("Username", text: $username)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.top, 10)
+                .padding(.bottom, 25)
+                .padding(.leading, 20)
+                .padding(.trailing, 20)
+            
+            Text("Email")
+                .foregroundStyle(.indigo)
+            
+            TextField("Email", text: $email)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.top, 10)
                 .padding(.bottom, 25)

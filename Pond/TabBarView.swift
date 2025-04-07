@@ -13,31 +13,31 @@ struct TabBarView: View {
         TabView(selection: $selectedTab) {
             TrackerView()
                 .tabItem{
-                    Label("", systemImage: "calendar")
+                    Label("Tracker", systemImage: "calendar")
                 }
                 .tag(0)
             
             JournalView()
                 .tabItem {
-                    Label("", systemImage: "pencil")
+                    Label("Journal", systemImage: "pencil")
                 }
                 .tag(1)
             
             HomeView()
                 .tabItem {
-                    Label("", systemImage: "house")
+                    Label("Home", systemImage: "house")
                 }
                 .tag(2)
             
             ResourceView()
                 .tabItem {
-                    Label("", systemImage: "phone")
+                    Label("Resources", systemImage: "phone")
                 }
                 .tag(3)
             
             ProfileView()
                 .tabItem {
-                    Label("", systemImage: "person")
+                    Label("Profile", systemImage: "person")
                 }
                 .tag(4)
         }
