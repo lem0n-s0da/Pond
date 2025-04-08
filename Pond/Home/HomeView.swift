@@ -23,7 +23,7 @@ struct HomeView: View {
             NavigationStack {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: -55), count: 2), spacing: 35) {
                     NavigationLink(destination: TrackerView()) {
-                        GridButtonView(title: "Mood Tracker")
+                        GridButtonView(title: "Mood\nTracker")
                     }
                     NavigationLink(destination: JournalView()) {
                         GridButtonView(title: "Journal")
@@ -68,7 +68,7 @@ struct GridButtonView: View {
             .foregroundStyle(.white)
             .frame(width: 120, height: 120)
             .background(Color.mint)
-            .cornerRadius(15)
+            .cornerRadius(35)
     }
 }
 
