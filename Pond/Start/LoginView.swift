@@ -6,22 +6,28 @@
 //
 
 import SwiftUI
-import CoreData
+import FirebaseAuth
+import FirebaseFirestore
 
 struct LoginView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-    @FetchRequest(entity: UserInfo.entity(), sortDescriptors: []) var users: FetchedResults<UserInfo>
+    @AppStorage("isLoggedIn") var isLoggedIn = false
+    @Environment(\.dismiss) var dismiss
     
-    @State private var username = ""
+    @State private var email = ""
     @State private var password = ""
     @State private var loginMessage = ""
     
     var body: some View {
+        
+        if isLoggedIn {
+            TabBarView()
+        }
+        
         VStack {
-            Text("Username")
+            Text("Email")
                 .foregroundStyle(.indigo)
             
-            TextField("Username", text: $username)
+            TextField("Email", text: $email)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.top, 10)
                 .padding(.bottom, 25)
@@ -51,10 +57,16 @@ struct LoginView: View {
     }
     
     private func login() {
-        if let user = users.first(where: {$0.username == username && $0.password == password }) {
+        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+            if let error = error {
+                print("Login error: \(error.localizedDescription)")
+                loginMessage = "Error Logging In..."
+                return
+            }
+            
+            guard let user = authResult?.user else { return }
+            print("Login Successful")
             loginMessage = "Login Successful!"
-        } else {
-            loginMessage = "Invalid username or password"
         }
     }
     

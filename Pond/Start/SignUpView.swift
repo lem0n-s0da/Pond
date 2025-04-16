@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
-import CoreData
+import FirebaseAuth
+import FirebaseFirestore
 
 struct SignUpView: View {
-    @Environment(\.managedObjectContext) private var viewContext
+    @AppStorage("isLoggedIn") var isLoggedIn = false
+    @Environment(\.dismiss) private var dismiss
     @State private var username = ""
     @State private var email = ""
     @State private var password = ""
@@ -29,6 +31,11 @@ struct SignUpView: View {
     }
     
     var body: some View {
+        
+        if isLoggedIn {
+            TabBarView()
+        }
+        
         VStack {
             Text("Username")
                 .foregroundStyle(.indigo)
@@ -90,22 +97,63 @@ struct SignUpView: View {
     }
 
     private func signUp() {
+        
         guard isPasswordValid else {
-            successMessage = "Password does not meet all requirments"
-            return
+                    successMessage = "Password does not meet all requirments"
+                    return
         }
         
-        let newUser = UserInfo(context: viewContext)
-        newUser.id = UUID()
-        newUser.username = username
-        newUser.password = password
-        
-        do {
-            try viewContext.save()
-            successMessage = "Account Created!"
-        } catch {
-            print("Error saving user: \(error)")
+        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+            if let error = error {
+                print("Error signing up: \(error.localizedDescription)")
+                successMessage = "Error signing up..."
+                return
+            }
+            
+            guard let user = authResult?.user else { return }
+            
+            let userDoc = [
+                "email": email,
+                "username": username
+            ]
+            
+            Firestore.firestore()
+                .collection("users")
+                .document(user.uid)
+                .setData(userDoc) { error in
+                    if let error = error {
+                        print("Error saving user document: \(error.localizedDescription)")
+                        successMessage = "Error signing up..."
+                    } else {
+                        print("User signed up and saved!")
+                        successMessage = "Signed Up Successfully!"
+                        UserDefaults.standard.set(user.uid, forKey: "currentUserID")
+                        isLoggedIn = true
+                    }
+                    
+                }
+
         }
+        
+//        guard isPasswordValid else {
+//            successMessage = "Password does not meet all requirments"
+//            return
+//        }
+//        
+////        let newUser = UserInfo(context: viewContext)
+////        newUser.id = UUID()
+////        newUser.username = username
+////        newUser.password = password
+//        
+//        do {
+//            //try viewContext.save()
+//            successMessage = "Account Created!"
+//            //UserDefaults.standard.set(newUser.id?.uuidString, forKey: "currentUserID")
+//            isLoggedIn = true
+//            dismiss()
+//        } catch {
+//            print("Error saving user: \(error)")
+//        }
     }
     
 }

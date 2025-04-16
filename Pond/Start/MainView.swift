@@ -8,7 +8,13 @@
 import SwiftUI
 
 struct MainView: View {
+    @AppStorage("isLoggedIn") var isLoggedIn = false
+    //@Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.dismiss) var dismiss
+    
+    
     var body: some View {
+        
         NavigationView {
             VStack(spacing: 20) {
                 
@@ -63,6 +69,11 @@ struct MainView: View {
             .padding()
         }
     }
+    
+    func dismissMain() {
+        dismiss()
+    }
+    
 }
 
 #Preview {
