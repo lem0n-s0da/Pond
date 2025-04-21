@@ -10,7 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 
 struct LoginView: View {
-    @AppStorage("isLoggedIn") var isLoggedIn = false
+    //@AppStorage("isLoggedIn") var isLoggedIn = false
     @Environment(\.dismiss) var dismiss
     
     @State private var email = ""
@@ -18,10 +18,6 @@ struct LoginView: View {
     @State private var loginMessage = ""
     
     var body: some View {
-        
-        if isLoggedIn {
-            TabBarView()
-        }
         
         VStack {
             Text("Email")
@@ -67,6 +63,7 @@ struct LoginView: View {
             guard let user = authResult?.user else { return }
             print("Login Successful")
             loginMessage = "Login Successful!"
+            AuthViewModel().isLoggedIn = true
         }
     }
     

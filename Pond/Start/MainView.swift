@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct MainView: View {
     @AppStorage("isLoggedIn") var isLoggedIn = false
     //@Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) var dismiss
-    
+    @StateObject var authViewModel = AuthViewModel()
     
     var body: some View {
         

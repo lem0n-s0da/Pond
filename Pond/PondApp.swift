@@ -19,6 +19,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct PondApp: App {
     @AppStorage("isLoggedIn") var isLoggedIn = false
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var authViewModel = AuthViewModel()
     
     let persistenceController = PersistenceController.shared
 

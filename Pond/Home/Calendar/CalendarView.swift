@@ -11,6 +11,7 @@ import FirebaseAuth
 struct CalendarView: View {
     @Binding var selectedDate: Date?
     let onDayTapped: (Date) -> Void
+    //let moodEntries: [MoodEntry]
     
     private let calendar = Calendar.current
     private let currentDate = Date()

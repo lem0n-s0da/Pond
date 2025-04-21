@@ -32,10 +32,6 @@ struct SignUpView: View {
     
     var body: some View {
         
-        if isLoggedIn {
-            TabBarView()
-        }
-        
         VStack {
             Text("Username")
                 .foregroundStyle(.indigo)
