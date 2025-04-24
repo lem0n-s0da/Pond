@@ -10,16 +10,16 @@ import FirebaseAuth
 import FirebaseFirestore
 
 struct LoginView: View {
-    //@AppStorage("isLoggedIn") var isLoggedIn = false
-    @Environment(\.dismiss) var dismiss
-    
+    @EnvironmentObject var authViewModel: AuthViewModel
     @State private var email = ""
     @State private var password = ""
     @State private var loginMessage = ""
     
     var body: some View {
-        
         VStack {
+            Text("Log In")
+                .font(.largeTitle)
+            
             Text("Email")
                 .foregroundStyle(.indigo)
             
@@ -41,7 +41,7 @@ struct LoginView: View {
                 .padding(.trailing, 20)
             
             Button("Log In") {
-                login()
+                
             }
             .buttonStyle(.bordered)
             
@@ -51,22 +51,6 @@ struct LoginView: View {
         }
         .padding()
     }
-    
-    private func login() {
-        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
-            if let error = error {
-                print("Login error: \(error.localizedDescription)")
-                loginMessage = "Error Logging In..."
-                return
-            }
-            
-            guard let user = authResult?.user else { return }
-            print("Login Successful")
-            loginMessage = "Login Successful!"
-            AuthViewModel().isLoggedIn = true
-        }
-    }
-    
 }
 
 #Preview {

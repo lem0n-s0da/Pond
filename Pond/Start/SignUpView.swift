@@ -10,12 +10,11 @@ import FirebaseAuth
 import FirebaseFirestore
 
 struct SignUpView: View {
-    @AppStorage("isLoggedIn") var isLoggedIn = false
-    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var authViewModel: AuthViewModel
     @State private var username = ""
     @State private var email = ""
     @State private var password = ""
-    @State private var successMessage = ""
+    @State private var message = ""
     
     // Password requirments
     private var isValidLength: Bool { password.count >= 8 }
@@ -31,8 +30,10 @@ struct SignUpView: View {
     }
     
     var body: some View {
-        
-        VStack {
+        VStack(alignment: .leading) {
+            Text("Create Account")
+                .font(.largeTitle)
+            
             Text("Username")
                 .foregroundStyle(.indigo)
             
@@ -48,6 +49,7 @@ struct SignUpView: View {
             
             TextField("Email", text: $email)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .keyboardType(.emailAddress)
                 .padding(.top, 10)
                 .padding(.bottom, 25)
                 .padding(.leading, 20)
@@ -76,7 +78,17 @@ struct SignUpView: View {
             .padding(.bottom, 25)
             
             Button("Sign Up") {
-                signUp()
+                if isPasswordValid {
+                    authViewModel.signUp(username: username, email: email, password: password) { error in
+                        if let error = error {
+                            message = error.localizedDescription
+                        } else {
+                            message = "Account Created Successfully"
+                        }
+                    }
+                } else {
+                    message = "Password does not meet all requirments"
+                }
             }
             //.buttonStyle(.bordered)
             .font(.title3.bold())
@@ -85,73 +97,19 @@ struct SignUpView: View {
             .foregroundStyle(.white)
             .cornerRadius(10)
             
-            Text(successMessage)
-                .foregroundColor(.mint)
-                .padding()
+            
+            if message != "Account Created Successfully" {
+                Text(message)
+                    .foregroundStyle(.red)
+                    .padding()
+            } else {
+                Text(message)
+                    .foregroundColor(.mint)
+                    .padding()
+            }
         }
         .padding()
     }
-
-    private func signUp() {
-        
-        guard isPasswordValid else {
-                    successMessage = "Password does not meet all requirments"
-                    return
-        }
-        
-        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-            if let error = error {
-                print("Error signing up: \(error.localizedDescription)")
-                successMessage = "Error signing up..."
-                return
-            }
-            
-            guard let user = authResult?.user else { return }
-            
-            let userDoc = [
-                "email": email,
-                "username": username
-            ]
-            
-            Firestore.firestore()
-                .collection("users")
-                .document(user.uid)
-                .setData(userDoc) { error in
-                    if let error = error {
-                        print("Error saving user document: \(error.localizedDescription)")
-                        successMessage = "Error signing up..."
-                    } else {
-                        print("User signed up and saved!")
-                        successMessage = "Signed Up Successfully!"
-                        UserDefaults.standard.set(user.uid, forKey: "currentUserID")
-                        isLoggedIn = true
-                    }
-                    
-                }
-
-        }
-        
-//        guard isPasswordValid else {
-//            successMessage = "Password does not meet all requirments"
-//            return
-//        }
-//        
-////        let newUser = UserInfo(context: viewContext)
-////        newUser.id = UUID()
-////        newUser.username = username
-////        newUser.password = password
-//        
-//        do {
-//            //try viewContext.save()
-//            successMessage = "Account Created!"
-//            //UserDefaults.standard.set(newUser.id?.uuidString, forKey: "currentUserID")
-//            isLoggedIn = true
-//            dismiss()
-//        } catch {
-//            print("Error saving user: \(error)")
-//        }
-    }
-    
 }
 
 #Preview {

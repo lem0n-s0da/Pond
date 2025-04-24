@@ -8,30 +8,26 @@
 import SwiftUI
 import FirebaseCore
 
-class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        FirebaseApp.configure()
-        return true
-    }
-}
+//class AppDelegate: NSObject, UIApplicationDelegate {
+//    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+//        FirebaseApp.configure()
+//        return true
+//    }
+//}
 
 @main
 struct PondApp: App {
-    @AppStorage("isLoggedIn") var isLoggedIn = false
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var authViewModel = AuthViewModel()
+//    let persistenceController = PersistenceController.shared
     
-    let persistenceController = PersistenceController.shared
+    init() {
+        FirebaseApp.configure()
+    }
 
     var body: some Scene {
         WindowGroup {
-            if isLoggedIn {
-                TabBarView()
-                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
-            } else {
-                MainView()
-                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
-            }
+            ContentView()
+                .environmentObject(authViewModel)
         }
     }
 }

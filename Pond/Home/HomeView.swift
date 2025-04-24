@@ -31,26 +31,14 @@ struct HomeView: View {
                     NavigationLink(destination: ResourceView()) {
                         GridButtonView(title: "Resources")
                     }
-                    NavigationLink(destination: TrackerView()) {
-                        GridButtonView(title: "tbd")
-                    }
-                    NavigationLink(destination: TrackerView()) {
-                        GridButtonView(title: "tbd")
-                    }
-                    NavigationLink(destination: TrackerView()) {
-                        GridButtonView(title: "tbd")
-                    }
-//                    ForEach(buttonTitles, id: \.self) { title in
-//                        Button(action: {
-//                            print("\(title) tapped")
-//                        }) {
-//                            Text(title)
-//                                .font(.headline)
-//                                .foregroundStyle(.white)
-//                                .frame(width: 125, height: 125)
-//                                .background(Color.mint)
-//                                .cornerRadius(15)
-//                        }
+//                    NavigationLink(destination: TrackerView()) {
+//                        GridButtonView(title: "tbd")
+//                    }
+//                    NavigationLink(destination: TrackerView()) {
+//                        GridButtonView(title: "tbd")
+//                    }
+//                    NavigationLink(destination: TrackerView()) {
+//                        GridButtonView(title: "tbd")
 //                    }
                 }
                 .padding()
