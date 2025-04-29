@@ -6,65 +6,93 @@
 //
 
 import SwiftUI
+import Firebase
 import FirebaseAuth
 
 struct MoodEntrySheet: View {
-    let selectedDate: Date
-    @Environment(\.dismiss) var dismiss
+    let date: Date
+    let existingMood: MoodType?
+    let onSave: () -> Void
     
-    let moods = ["Happy", "Sad"]
-    @State private var selectedMood: String?
+    @Environment(\.dismiss) var dismiss
+    @State private var selectedMood: MoodType?
     
     var body: some View {
         NavigationView {
             VStack {
-                Text("How did you feel?")
-                    .font(.headline)
+                Text("How do you feel?")
                     .padding()
                 
-                ForEach(moods, id: \.self) { mood in
-                    Button(action: {
-                        selectedMood = mood
-                    }) {
-                        Text(mood)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(selectedMood == mood ? Color.blue.opacity(0.7) : Color.gray.opacity(0.2))
-                            .foregroundStyle(.black)
-                            .cornerRadius(10)
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3)) {
+                    ForEach(MoodType.allCases, id: \.self) { mood in
+                        Button(action: {
+                            selectedMood = mood
+                        }) {
+                            Text(mood.rawValue.capitalized)
+                                .padding()
+                                .foregroundStyle(.black)
+                                .background(mood.colorHex == selectedMood?.colorHex ? Color(hex: mood.colorHex).opacity(0.8) : Color(hex: mood.colorHex).opacity(0.3))
+                                .cornerRadius(10)
+                        }
                     }
                 }
+                
+                Button("Save") {
+                    saveMood()
+                }
+                .disabled(selectedMood == nil)
+                .padding()
+                
                 Spacer()
             }
-            .padding()
             .navigationTitle("Mood Entry")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarItems(trailing: Button("Save") {
-                saveMood()
-                dismiss()
-            }.disabled(selectedMood == nil))
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+            }
+            .onAppear {
+                selectedMood = existingMood
+            }
         }
     }
     
-    private func formattedDate(_ date: Date) -> String {
+    private func fornatted(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         return formatter.string(from: date)
     }
     
     private func saveMood() {
-        guard let mood = selectedMood, let userID = Auth.auth().currentUser?.uid else { return }
+        guard let mood = selectedMood, let userID = Auth.auth().currentUser?.uid else {
+            print("Error rip")
+            return
+        }
         
-        let entry = MoodEntry(userID: userID, mood: mood, date: selectedDate)
-        FirestoreManager.saveMood(entry, for: userID) { error in
+        let db = Firestore.firestore()
+        let day = Calendar.current.startOfDay(for: date)
+        //let docId = ISO8601DateFormatter().string(from: day)
+        
+        let data: [String: Any] = [
+            "uid": userID,
+            "date": Timestamp(date: day),
+            "mood": mood.rawValue
+        ]
+//        print("Mood to save: \(data.values)")
+        // .collection("moodEntries").document(docId)
+        //db.collection("users").document(userID).setData(data, merge: true)
+        db.collection("userMoods").document("moodEntries\(day)").setData(data, merge: true) { error in
             if let error = error {
-                print("Error saving mood: \(error.localizedDescription)")
+                print("Error saving mood: \(error)")
             } else {
-                print("Mood saved for \(formattedDate(selectedDate))")
+                print("\(data) saved to \(userID)")
+                onSave()
+                dismiss()
             }
         }
     }
-    
 }
 
 #Preview {

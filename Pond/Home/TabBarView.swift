@@ -11,7 +11,7 @@ struct TabBarView: View {
     @State private var selectedTab = 2 // home
     var body: some View {
         TabView(selection: $selectedTab) {
-            TrackerView()
+            CalendarView()
                 .tabItem{
                     Label("Tracker", systemImage: "calendar")
                 }

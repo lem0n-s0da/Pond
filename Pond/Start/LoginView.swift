@@ -41,7 +41,12 @@ struct LoginView: View {
                 .padding(.trailing, 20)
             
             Button("Log In") {
-                
+                authViewModel.signIn(email: email, password: password) { error in
+                    if let error = error {
+                        loginMessage = error.localizedDescription
+                    }
+                    
+                }
             }
             .buttonStyle(.bordered)
             

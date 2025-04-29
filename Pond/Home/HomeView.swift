@@ -22,7 +22,7 @@ struct HomeView: View {
         VStack {
             NavigationStack {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: -55), count: 2), spacing: 35) {
-                    NavigationLink(destination: TrackerView()) {
+                    NavigationLink(destination: CalendarView()) {
                         GridButtonView(title: "Mood\nTracker")
                     }
                     NavigationLink(destination: JournalView()) {

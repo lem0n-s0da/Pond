@@ -58,9 +58,9 @@ struct MainView: View {
                         .cornerRadius(20)
                 }
                 Spacer()
-                Button("Continue as Guest"){
-                    // log in logic
-                }
+//                Button("Continue as Guest"){
+//                    // log in logic
+//                }
                 .font(.title3.bold())
                 .frame(maxWidth: .infinity)
                 //.background(Color.gray.opacity(0.2))

@@ -9,7 +9,13 @@ import SwiftUI
 
 struct ProfileView: View {
     var body: some View {
-        Text("Profile")
+        VStack {
+            Text("Profile")
+            
+            Button("Sign Out") {
+                AuthViewModel().signOut()
+            }
+        }
     }
 }
 

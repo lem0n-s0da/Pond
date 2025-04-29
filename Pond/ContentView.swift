@@ -12,6 +12,7 @@ struct ContentView: View {
     
     var body: some View {
         Group {
+            //MainView()
             if authViewModel.isLoggedIn {
                 TabBarView()
             } else {

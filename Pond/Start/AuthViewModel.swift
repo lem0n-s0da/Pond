@@ -35,7 +35,15 @@ class AuthViewModel: ObservableObject {
                     "email": email,
                     "uid": user.uid
                 ]) { dbError in
-                    completion(dbError)
+                    if let error = error {
+                        print("Error creating user document: \(error)")
+                    } else {
+                        print("User document created successfully!")
+                        //self.isLoggedIn = true
+                    }
+                }
+                Auth.auth().signIn(withEmail: email, password: password) { _, error in
+                    completion(error)
                 }
             } else {
                 completion(error)
@@ -47,6 +55,7 @@ class AuthViewModel: ObservableObject {
         Auth.auth().signIn(withEmail: email, password: password) { _, error in
             completion(error)
         }
+        //self.isLoggedIn = true
     }
     
     func signOut() {
