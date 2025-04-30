@@ -83,7 +83,7 @@ struct MoodEntrySheet: View {
 //        print("Mood to save: \(data.values)")
         // .collection("moodEntries").document(docId)
         //db.collection("users").document(userID).setData(data, merge: true)
-        db.collection("userMoods").document("moodEntries\(day)").setData(data, merge: true) { error in
+        db.collection("userMoods").document("\(userID)-\(day)").setData(data, merge: true) { error in
             if let error = error {
                 print("Error saving mood: \(error)")
             } else {

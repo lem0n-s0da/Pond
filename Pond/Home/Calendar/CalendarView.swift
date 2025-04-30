@@ -22,11 +22,10 @@ struct CalendarView: View {
                 .padding(.top)
             
             calendarGrid
+                .padding(.bottom, 25)
             
-//            if !moodEntries.isEmpty {
-//                statisticsSection
-//            }
             statisticsSection
+            
             Spacer()
         }
         .onAppear {
@@ -93,11 +92,13 @@ struct CalendarView: View {
             var loadedEntries: [Date: MoodType] = [:]
             
             for doc in docs {
-                if let moodString = doc["mood"] as? String,
-                   let timestamp = doc["date"] as? Timestamp,
-                   let mood = MoodType(rawValue: moodString) {
-                    let date = Calendar.current.startOfDay(for: timestamp.dateValue())
-                    loadedEntries[date] = mood
+                if doc["uid"] as? String == userID {
+                    if let moodString = doc["mood"] as? String,
+                       let timestamp = doc["date"] as? Timestamp,
+                       let mood = MoodType(rawValue: moodString) {
+                        let date = Calendar.current.startOfDay(for: timestamp.dateValue())
+                        loadedEntries[date] = mood
+                    }
                 }
             }
             self.moodEntries = loadedEntries
@@ -105,22 +106,24 @@ struct CalendarView: View {
     }
     
     private var statisticsSection: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .center) {
             Text("Mood Trends This Month")
                 .font(.headline)
                 .padding(.bottom, 15)
             
-            let moodCounts = Dictionary(grouping: moodEntries.values, by: { $0 })
-                .mapValues { $0.count }
-            let mostCommon = moodCounts.max { $0.value < $1.value }
-            
-            if let mood = mostCommon?.key {
-                Text("Most common mood: \(mood.rawValue.capitalized)")
-            }
-            if let todayMood = moodEntries[Calendar.current.startOfDay(for: Date())] {
-                Text("Today's mood: \(todayMood.rawValue.capitalized)")
-            } else {
-                Text("No mood logged for today.")
+            VStack(alignment: .leading) {
+                let moodCounts = Dictionary(grouping: moodEntries.values, by: { $0 })
+                    .mapValues { $0.count }
+                let mostCommon = moodCounts.max { $0.value < $1.value }
+                
+                if let mood = mostCommon?.key {
+                    Text("Most common mood: \(mood.rawValue.capitalized)")
+                }
+                if let todayMood = moodEntries[Calendar.current.startOfDay(for: Date())] {
+                    Text("Today's mood: \(todayMood.rawValue.capitalized)")
+                } else {
+                    Text("No mood logged for today.")
+                }
             }
         }
         .padding()
